@@ -2,13 +2,13 @@ import React, { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 import './textNode.css';
 
-export default memo(({ data }) => {
+export default memo(({ data ,selected}) => {
     return (
         <>
             <Handle type="source" position={Position.Right} />
-            <div className='text-node-container'>
+            <div className={`text-node-container ${selected ? 'active':''}`}>
                 <div className='header'>
-                    Send Message
+                    Send Message {selected ? '✔️':''}
                 </div>
                 <div className='body'>
                     {data.label}

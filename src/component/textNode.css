@@ -6,6 +6,10 @@
     width: 250px;
 }
 
+.text-node-container.active{
+    box-shadow: rgba(27, 27, 247, 0.2) 0px 7px 29px 0px;
+}
+
 .text-node-container .header{
     display: flex;
     align-items: center;
