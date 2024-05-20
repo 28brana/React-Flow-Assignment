@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import ReactFlow, { useNodesState, useEdgesState, addEdge, Controls, Background, MiniMap, ReactFlowProvider, MarkerType } from 'reactflow';
-import './App.css';
+import React, { useCallback, useRef, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ReactFlow, { addEdge, Background, Controls, MarkerType, MiniMap, ReactFlowProvider, useEdgesState, useNodesState } from 'reactflow';
 import 'reactflow/dist/style.css';
-import TextNode from './component/TextNode';
+import './App.css';
 import SideBar from './component/SideBar';
-
+import TextNode from './component/TextNode';
 let id = 1;
 const getId = () => `dndnode_${id++}`;
 
@@ -15,12 +16,12 @@ const nodeTypes = {
 //   custom: CustomEdge
 // };
 const initialNodes = [
-  {
-    id: '1',
-    type: 'input',
-    data: { label: 'Start Node' },
-    position: { x: 250, y: 5 },
-  },
+  // {
+  //   id: '1',
+  //   type: 'input',
+  //   data: { label: 'Start Node' },
+  //   position: { x: 250, y: 5 },
+  // },
 ];
 export default function App() {
   const reactFlowWrapper = useRef(null);
@@ -28,7 +29,7 @@ export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
-  const [selectedNodeId, setSelectedNodeId] = useState(null); 
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
 
   const onNodeClick = useCallback(
     (event, node) => {
@@ -38,7 +39,11 @@ export default function App() {
   );
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge({
-      ...params,
+      ...params, markerEnd: {
+        type: MarkerType.Arrow,
+        width: 20,
+        height: 20,
+      }
     }, eds)),
     [setEdges],
   );
@@ -85,8 +90,21 @@ export default function App() {
     }
   };
 
-  const handleSubmit=()=>{
+  const validateNodes = () => {
+    if (nodes.length <= 1) return true;
 
+    const nodesWithTargetHandles = new Set(edges.map(edge => edge.target));
+    const nodesWithoutTargetHandles = nodes.filter(node => !nodesWithTargetHandles.has(node.id));
+
+    return nodesWithoutTargetHandles.length <= 1;
+  };
+
+  const handleSubmit = () => {
+    if (validateNodes()) {
+      toast('Flow saved successfully!', { type: 'success' })
+    } else {
+      toast('Error: More than one node has empty target handles.', { type: 'error' })
+    }
   }
   return (
     <div className='App'>
@@ -115,9 +133,21 @@ export default function App() {
               <Background />
             </ReactFlow>
           </div>
-          <SideBar selectedNode={nodes.find(node => node.id === selectedNodeId)} onNodeUpdate={handleNodeUpdate} closeNodeSelect={()=>{setSelectedNodeId(null)}}/>
+          <SideBar selectedNode={nodes.find(node => node.id === selectedNodeId)} onNodeUpdate={handleNodeUpdate} closeNodeSelect={() => { setSelectedNodeId(null) }} />
         </div>
       </ReactFlowProvider>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 }

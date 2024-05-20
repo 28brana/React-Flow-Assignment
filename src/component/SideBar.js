@@ -1,5 +1,5 @@
-import React from 'react';
 import { ArrowLeft, ChatsCircle } from 'phosphor-react';
+import React from 'react';
 
 const SideBar = ({ selectedNode, onNodeUpdate,closeNodeSelect }) => {
   const onDragStart = (event, nodeType) => {

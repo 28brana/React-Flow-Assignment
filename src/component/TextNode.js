@@ -1,12 +1,11 @@
 import React, { memo } from 'react';
-import { Handle, useStore, Position } from 'reactflow';
+import { Handle, Position } from 'reactflow';
 import './textNode.css';
 
 export default memo(({ data }) => {
-    // console.log(useStore())
     return (
         <>
-            <Handle type="target" position={Position.Right} />
+            <Handle type="source" position={Position.Right} />
             <div className='text-node-container'>
                 <div className='header'>
                     Send Message
@@ -15,7 +14,7 @@ export default memo(({ data }) => {
                     {data.label}
                 </div>
             </div>
-            <Handle type="source" position={Position.Left} />
+            <Handle type="target" position={Position.Left} />
         </>
     );
 });
